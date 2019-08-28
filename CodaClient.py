@@ -425,3 +425,25 @@ class Client():
       "pk": pk
     }
     await self._graphql_subscription(query, variables, callback)
+
+  # This is a quick hack just to get the stuff I need
+  def get_blocks(self) -> dict:
+    """Gets the blocks known to the node. 
+    
+    Returns:
+        
+    """
+    query = '''
+    {
+      blocks{
+        nodes {
+          snarkJobs {
+            prover
+            fee
+          }
+        }
+      }
+    }
+    '''
+    res = self._send_query(query)
+    return res["data"]    
