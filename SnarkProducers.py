@@ -28,7 +28,9 @@ snarkers = {
     "tNcicNArpuQKzfokRasB2Mz7nFaSxnF2zojB43GZcN6pK3oDXVGUvJ8bxTW5rcB3b6UwTorUdvo8dV5R7dd25SVvErwhuF8KtmFBsG8Zu6visqrNVN99Y1QdUjZByLLz1BZbnh1yGcvHXR": "IIya | Genesis Labs",
     "tNci6xWipwohUQQVw8F69FqnSuMBLBpfpK9LNdea1YaDbPrPEy61HPyfkjGjwxYuEKNvvvxikUg3aYigWpowMZo53EkNzSnzrJs3fpKBUMqmfreQGc9VrxXCbT1GbYNQNYyMEYreWMfj3W": "aureus",
     "tNciCJB9Df2QdurcjSpKEJDuFU5sBphMCmjSr5xVPf77V7Pq3HyuKqheWiz6pekZjdhnBMTxYrfttMoiA4tzYPBmTwEN2bZKkhH9hcHa28eEJFZdiSryZ6mCKyniqXYhAxzKUfSXAKwQWN": "jspadave",
-    "tNciPt5taz5rze7dF6TZSMUYtWzwoLKRfQxgCi8tT35HGsama9dmGqAZXNonv8m8dnbRe56H9zT63kVBSxTHjbeU5egZcqTFMpsCbCvV6sbMq44X45eguHSWhPtFodqfR7fPWXSLqFFBku": "Dmitry D"
+    "tNciPt5taz5rze7dF6TZSMUYtWzwoLKRfQxgCi8tT35HGsama9dmGqAZXNonv8m8dnbRe56H9zT63kVBSxTHjbeU5egZcqTFMpsCbCvV6sbMq44X45eguHSWhPtFodqfR7fPWXSLqFFBku": "Dmitry D",
+    "tNciBNjgL24UDGk6PfqB49S5sZmkPrmzxKjJchk9XAiFrd9TWxpyFSsxEVpXeVTfAkfYXndZU97512YpYbJXKVp5TTcXjKen3f1MZQrjW63MhrP4L3cGq9yYv9b7uEs2wDfPq7j83zmY2e": "Unknown",
+    "tNciUwf4Uns6fSuxcfgtdLHKv1CJd7iQmfGt9m9dWNNiB9nxC3A4FMD8xT13k5eqeasNwQKP8yBNbreQxePjBPzQDHSzbh93UXQgvjLQ5vYtTXC8bTavZDaRZtq41fpnD2246RvAsvFR9u": "ansonlau3"
 }
 
 for value in c["blocks"]["nodes"]:
@@ -36,11 +38,14 @@ for value in c["blocks"]["nodes"]:
     if jobs:
         # Loop through all jobs
         for j in jobs:
-            data.append([j["prover"][0:15] + "...", j["fee"], snarkers.get(j["prover"], "New")])
+            data.append([j["prover"][0:15] + "...", j["fee"],
+                         snarkers.get(j["prover"], "New")])
 
 df = pd.DataFrame(data)
 df.columns = ["ProverKey", "Fee", "User"]
 
-producers = df.groupby(["ProverKey","User"]).size().sort_values(ascending=False)
+# We are interested in total number of proofs and also sum of fees earned
+earners = pd.to_numeric(df.Fee).groupby([df.ProverKey, df.User]).agg(
+    ["sum", "count"]).sort_values("sum", ascending=False)
 
-print(producers)
+print(earners)
