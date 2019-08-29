@@ -1,8 +1,13 @@
 # A super quick "unofficial" script to parse the GraphQL API to get public keys for those producing SNARK work
-# Clone the repo as you will need the CodaClient library and run with `python3 SnarkProducers.py`
+# Install dependencies and run with `python3 SnarkProducers.py`
 # You'll need to be running the GraphQL API see here for quick setup https://codaprotocol.com/docs/developers/graphql-api/
-# and here for a detailed overview https://garethtdavies.com/crypto/first-steps-with-coda-graphql-api.html and update line 11 if required
+# and here for a detailed overview https://garethtdavies.com/crypto/first-steps-with-coda-graphql-api.html and update line 14 if required
 # Your results may vary depending on how many blocks your node has seen
+
+# Dependencies
+# >=Python 3.5
+# pip3 install git+https://github.com/CodaProtocol/coda-python-client.git
+# pip3 install pandas
 
 import CodaClient
 import pandas as pd
@@ -13,6 +18,7 @@ coda = CodaClient.Client(graphql_host="localhost", graphql_port="8000")
 # Get all the blocks
 c = coda.get_blocks()
 
+t = 0
 data = []
 
 # Known Snarker aliases
@@ -34,6 +40,7 @@ snarkers = {
 }
 
 for value in c["blocks"]["nodes"]:
+    t += 1
     jobs = value["snarkJobs"]
     if jobs:
         # Loop through all jobs
@@ -48,4 +55,10 @@ df.columns = ["ProverKey", "Fee", "User"]
 earners = pd.to_numeric(df.Fee).groupby([df.ProverKey, df.User]).agg(
     ["sum", "count"]).sort_values("sum", ascending=False)
 
+# Tidy up column names
+earners.columns = [
+    "Total Fees", "Total SNARKS"
+]
+
 print(earners)
+print("Total Blocks Observed: {}".format(t))
