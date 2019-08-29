@@ -53,12 +53,16 @@ df.columns = ["ProverKey", "Fee", "User"]
 
 # We are interested in total number of proofs and also sum of fees earned
 earners = pd.to_numeric(df.Fee).groupby([df.ProverKey, df.User]).agg(
-    ["sum", "count"]).sort_values("sum", ascending=False)
+    ["sum", "count", "min", "max"]).sort_values("sum", ascending=False)
 
 # Tidy up column names
 earners.columns = [
-    "Total Fees", "Total SNARKS"
+    "Total Fees", "Total SNARKS", "Minimum Fee", "Maximum Fee"
 ]
 
 print(earners)
 print("Total Blocks Observed: {}".format(t))
+
+# Check fee output for sanity checking
+fees = df.groupby("Fee").size()
+print(fees)
