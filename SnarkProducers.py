@@ -1,6 +1,6 @@
 # A super quick "unofficial" script to parse the GraphQL API to get public keys for those producing SNARK work
 # Install dependencies and run with `python3 SnarkProducers.py`
-# You'll need to be running the GraphQL API see here for quick setup https://codaprotocol.com/docs/developers/graphql-api/
+# You'll need to be running the GraphQL API and in archive mode see here for quick setup https://codaprotocol.com/docs/developers/graphql-api/
 # and here for a detailed overview https://garethtdavies.com/crypto/first-steps-with-coda-graphql-api.html and update line 14 if required
 # Your results may vary depending on how many blocks your node has seen
 
